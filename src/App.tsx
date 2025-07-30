@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import SplashScreen from './components/SplashScreen';
 import AuthScreen from './components/AuthScreen';

@@ -218,7 +218,7 @@ const ContactSection: React.FC = () => {
                     initial={{ opacity: 0, scale: 0 }}
                     whileInView={{ opacity: 1, scale: 1 }}
                     viewport={{ once: true }}
-                    transition={{ delay: index * 0.1 }}
+                    transition={{ delay: index * 0.1, duration: 2, repeat: Infinity }}
                     whileHover={{ 
                       scale: 1.15, 
                       y: -5,
@@ -227,11 +227,6 @@ const ContactSection: React.FC = () => {
                     whileTap={{ scale: 0.9 }}
                     animate={{
                       y: [0, -3, 0]
-                    }}
-                    transition={{
-                      duration: 2,
-                      repeat: Infinity,
-                      delay: index * 0.2
                     }}
                     className={`w-12 h-12 rounded-full bg-gradient-to-r ${social.color} text-white flex items-center justify-center text-lg shadow-lg hover:shadow-xl transition-all duration-300`}
                   >

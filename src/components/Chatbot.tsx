@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, X, Loader, Mic, MicOff } from 'lucide-react';
+import { Send, X, Mic, MicOff } from 'lucide-react';
 import { callGeminiAPI } from '../utils/geminiApi';
 
 interface Message {
