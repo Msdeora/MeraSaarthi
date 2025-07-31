@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Mail, Lock, User, Eye, EyeOff, Globe, MapPin } from 'lucide-react';
+import { registerUser, loginUser } from '../firebase/auth';
+import { createUserProfile } from '../firebase/firestore';
 
 interface AuthScreenProps {
   onAuthComplete: () => void;
@@ -37,16 +39,46 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthComplete }) => {
     password: '',
     country: 'India'
   });
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Simulate authentication
-    setTimeout(onAuthComplete, 1000);
+    setIsLoading(true);
+    setError('');
+
+    try {
+      if (isLogin) {
+        // Login
+        await loginUser(formData.email, formData.password);
+        onAuthComplete();
+      } else {
+        // Register
+        const user = await registerUser(formData.email, formData.password, formData.name);
+        
+        // Create user profile in Firestore
+        await createUserProfile({
+          uid: user.uid,
+          email: user.email || '',
+          displayName: formData.name,
+          country: selectedCountry.name,
+          currency: selectedCountry.currency,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        });
+        
+        onAuthComplete();
+      }
+    } catch (error: any) {
+      setError(error.message);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleGoogleAuth = () => {
-    // Simulate Google authentication
-    setTimeout(onAuthComplete, 1000);
+    // TODO: Implement Google authentication
+    setError('Google authentication coming soon!');
   };
 
   const handleCountrySelect = (country: Country) => {
@@ -223,13 +255,40 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthComplete }) => {
             </motion.div>
           )}
 
+          {/* Error Message */}
+          {error && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg"
+            >
+              <p className="text-sm text-red-700">{error}</p>
+            </motion.div>
+          )}
+
           <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
+            whileHover={{ scale: isLoading ? 1 : 1.02 }}
+            whileTap={{ scale: isLoading ? 1 : 0.98 }}
             type="submit"
-            className="w-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300"
+            disabled={isLoading}
+            className={`w-full py-3 rounded-xl font-semibold transition-all duration-300 ${
+              isLoading 
+                ? 'bg-gray-400 cursor-not-allowed' 
+                : 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white hover:shadow-lg'
+            }`}
           >
-            {isLogin ? 'Sign In' : 'Create Account'}
+            {isLoading ? (
+              <div className="flex items-center justify-center space-x-2">
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 1, repeat: Infinity }}
+                  className="w-4 h-4 border-2 border-white border-t-transparent rounded-full"
+                />
+                <span>Processing...</span>
+              </div>
+            ) : (
+              isLogin ? 'Sign In' : 'Create Account'
+            )}
           </motion.button>
         </form>
 

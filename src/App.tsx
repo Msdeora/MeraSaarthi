@@ -65,7 +65,7 @@ function App() {
                     style={{
                       left: `${Math.random() * 100}%`,
                       top: `${Math.random() * 100}%`
-                    }}
+                    } as React.CSSProperties}
                   />
                 ))}
               </div>
@@ -211,7 +211,7 @@ function App() {
                             delay: item.delay
                           }}
                           className="absolute top-1/2 left-1/2 text-4xl"
-                          style={{ transformOrigin: 'center' }}
+                          style={{ transformOrigin: 'center' } as React.CSSProperties}
                         >
                           {item.emoji}
                         </motion.div>

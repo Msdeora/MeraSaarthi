@@ -26,6 +26,8 @@ A modern travel website with an AI-powered chatbot that helps users explore Indi
 - **Styling**: Tailwind CSS + Framer Motion
 - **AI**: Google Gemini AI API
 - **Backend**: Express.js (for API proxy)
+- **Database**: Firebase Firestore
+- **Authentication**: Firebase Auth
 - **Icons**: Lucide React
 
 ## Installation
@@ -35,13 +37,18 @@ A modern travel website with an AI-powered chatbot that helps users explore Indi
    npm install
    ```
 
-2. **Start the Development Server**:
+2. **Firebase Setup**:
+   - Follow the detailed setup guide in `FIREBASE_SETUP.md`
+   - Create a Firebase project with your Gmail ID: `maheshwarsinghdeora@gmail.com`
+   - Update the Firebase configuration in `src/firebase/config.ts`
+
+3. **Start the Development Server**:
    ```bash
    npm run dev:full
    ```
    This will start both the frontend (Vite) and backend (Express) servers.
 
-3. **Access the Application**:
+4. **Access the Application**:
    - Frontend: http://localhost:5173
    - Backend API: http://localhost:3001
 
@@ -71,6 +78,10 @@ src/
 │   ├── Header.tsx           # Navigation header
 │   ├── AuthScreen.tsx       # Login/Signup with country selection
 │   └── ...                  # Other components
+├── firebase/
+│   ├── config.ts            # Firebase configuration
+│   ├── auth.ts              # Authentication utilities
+│   └── firestore.ts         # Database operations
 ├── utils/
 │   └── geminiApi.ts         # Gemini API integration
 └── App.tsx                  # Main application
@@ -91,10 +102,19 @@ src/
 
 ## Environment Variables
 
-The Gemini API key is currently hardcoded for development. For production, consider using environment variables:
+For production, consider using environment variables:
 
 ```env
+# Gemini API
 GEMINI_API_KEY=your_api_key_here
+
+# Firebase Configuration
+VITE_FIREBASE_API_KEY=your-firebase-api-key
+VITE_FIREBASE_AUTH_DOMAIN=your-project-id.firebaseapp.com
+VITE_FIREBASE_PROJECT_ID=your-project-id
+VITE_FIREBASE_STORAGE_BUCKET=your-project-id.appspot.com
+VITE_FIREBASE_MESSAGING_SENDER_ID=your-messaging-sender-id
+VITE_FIREBASE_APP_ID=your-app-id
 ```
 
 ## Contributing

@@ -2,6 +2,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send, X, Mic, MicOff } from 'lucide-react';
 import { callGeminiAPI } from '../utils/geminiApi';
+import { saveChatMessage, getChatHistory } from '../firebase/firestore';
+import { getCurrentUser } from '../firebase/auth';
 
 interface Message {
   id: string;
@@ -23,6 +25,7 @@ const Chatbot: React.FC = () => {
   const [inputText, setInputText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isListening, setIsListening] = useState(false);
+  const [sessionId] = useState(`session_${Date.now()}`);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -36,6 +39,9 @@ const Chatbot: React.FC = () => {
   const sendMessage = async () => {
     if (!inputText.trim() || isLoading) return;
 
+    const currentUser = getCurrentUser();
+    const userId = currentUser?.uid || 'anonymous';
+
     const userMessage: Message = {
       id: Date.now().toString(),
       text: inputText,
@@ -48,6 +54,15 @@ const Chatbot: React.FC = () => {
     setIsLoading(true);
 
     try {
+      // Save user message to Firebase
+      await saveChatMessage({
+        userId,
+        message: inputText,
+        isUser: true,
+        sessionId,
+        timestamp: new Date()
+      });
+
       const response = await callGeminiAPI(inputText);
       
       const aiResponse: Message = {
@@ -56,7 +71,17 @@ const Chatbot: React.FC = () => {
         isUser: false,
         timestamp: new Date()
       };
+      
       setMessages(prev => [...prev, aiResponse]);
+
+      // Save AI response to Firebase
+      await saveChatMessage({
+        userId,
+        message: response,
+        isUser: false,
+        sessionId,
+        timestamp: new Date()
+      });
     } catch (error) {
       console.error('Error calling Gemini API:', error);
       const errorMessage: Message = {
@@ -151,7 +176,7 @@ const Chatbot: React.FC = () => {
                     style={{
                       left: `${20 + (i * 15)}%`,
                       top: `${30 + (i % 2) * 20}%`
-                    }}
+                    } as React.CSSProperties}
                   >
                     {['🕌', '🏛️', '⛩️', '🗿', '🎭'][i]}
                   </motion.div>
