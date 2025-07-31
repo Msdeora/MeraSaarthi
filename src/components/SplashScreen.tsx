@@ -28,7 +28,7 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ onComplete }) => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-br from-saffron-400 via-royal-500 to-indigo-600 relative overflow-hidden"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-br from-saffron-400 via-royal-500 to-indigo-600 relative overflow-hidden w-screen h-screen"
     >
       {/* Animated Background Particles */}
       <div className="absolute inset-0 overflow-hidden">
